@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://kxt4pty6i2bf"]
+
+[ext_resource type="Texture2D" uid="uid://ygw2g1lmiugq" path="res://assets/grid_texture.png" id="1_w6lwb"]
+[ext_resource type="Script" path="res://inventory_ui/slot/slot.gd" id="2_yufw0"]
+
+[node name="Slot" type="TextureRect"]
+texture = ExtResource("1_w6lwb")
+script = ExtResource("2_yufw0")
+
+[node name="StatusFilter" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
