@@ -10,7 +10,7 @@ var slot_array : Array[TextureRect] = []
 var item_held : Item = null
 var current_slot : Slot = null
 var can_place := false
-var icon_anchor : Vector2i
+var icon_anchor : Vector2i = Vector2i()
 
 func _ready() -> void:
 	for i in range(slot_amount):
@@ -23,10 +23,14 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("rotate") and item_held:
-		_rotate_held_item()
+		rotate_held_item()
+
+	if Input.is_action_just_pressed("m1") and item_held and current_slot:
+		place_item()
+
 
 func _on_slot_mouse_entered(slot: Slot) -> void:
-	icon_anchor = Vector2i(10000, 10000)
+	icon_anchor = Vector2i(1000, 1000)
 	current_slot = slot
 	if item_held:
 		check_slot_availability(current_slot)
@@ -34,11 +38,13 @@ func _on_slot_mouse_entered(slot: Slot) -> void:
 
 
 func _on_slot_mouse_exited(slot: Slot) -> void:
+	current_slot = null
 	clear_slots()
+
 
 # Item spawn button
 func _on_button_pressed() -> void:
-	var item : Item = preload("res://item/item.tscn").instantiate()
+	var item : Item = load("res://item/item.tscn").instantiate()
 	item.is_selected = true
 	add_child(item)
 	item_held = item
@@ -47,8 +53,8 @@ func _on_button_pressed() -> void:
 func check_slot_availability(slot: Slot) -> void:
 	for grid in item_held.item_grid:
 		# Calculates the position of the slot that needs to be checked because of item_grid "hitbox";
-		var slot_to_check : int = slot.id + grid[0] + (grid[1] * col_count)
-		var column_wrap_check : int = slot.id % col_count + grid[0]
+		var slot_to_check : int = slot.id + grid.x + (grid.y * col_count)
+		var column_wrap_check : int = slot.id % col_count + grid.x
 		# If column_wrap_check is less than 0 it means the item_grid hitbox wraps around on the left side,
 		# if is bigger than col_count it means that the hitbox wraps on the right side.
 		if column_wrap_check < 0 or column_wrap_check >= col_count:
@@ -66,8 +72,8 @@ func check_slot_availability(slot: Slot) -> void:
 func set_slots(slot: Slot) -> void:
 	for grid in item_held.item_grid:
 		# Calculates the position of the slot that needs to be checked because of item_grid "hitbox";
-		var slot_to_check : int = slot.id + grid[0] + (grid[1] * col_count)
-		var column_wrap_check : int = slot.id % col_count + grid[0]
+		var slot_to_check : int = slot.id + grid.x + (grid.y * col_count)
+		var column_wrap_check : int = slot.id % col_count + grid.x
 		# If column_wrap_check is less than 0 it means the item_grid hitbox wraps around on the left side,
 		# if is bigger than col_count it means that the hitbox wraps on the right side.
 		if column_wrap_check < 0 or column_wrap_check >= col_count:
@@ -77,8 +83,8 @@ func set_slots(slot: Slot) -> void:
 
 		if can_place:
 			slot_array[slot_to_check].state = Slot.States.FREE
-			if grid[0] < icon_anchor.y: icon_anchor.y = grid[0]
-			if grid[1] < icon_anchor.x: icon_anchor.x = grid[1]
+			if grid.x < icon_anchor.x: icon_anchor.x = grid.x
+			if grid.y < icon_anchor.y: icon_anchor.y = grid.y
 		else:
 			slot_array[slot_to_check].state = Slot.States.OCCUPIED
 
@@ -87,8 +93,21 @@ func clear_slots() -> void:
 	for slot in slot_array:
 		slot.state = Slot.States.DEFAULT
 
-func _rotate_held_item() -> void:
+
+func rotate_held_item() -> void:
 	item_held.rotate_item()
 	clear_slots()
 	if current_slot:
 		_on_slot_mouse_entered(current_slot)
+
+
+func place_item() -> void:
+	if not can_place or not current_slot:
+		return
+
+	var slot_anchor : int = current_slot.id + icon_anchor.x + (icon_anchor.y * col_count)
+	item_held.snap_to(slot_array[slot_anchor].global_position)
+	item_held.is_selected = false
+	item_held = null
+	
+

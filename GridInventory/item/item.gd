@@ -5,6 +5,8 @@ class_name Item
 @export var item_grid : Array[Vector2i] = [Vector2i()] : set = _set_item_grid
 @export var hide_item_grid := false : set = _set_hide_item_grid
 
+@onready var item_texture : TextureRect = $ItemTexture
+
 var is_selected := false : set = _set_is_selected
 var grid_anchor : Vector2i
 
@@ -23,8 +25,8 @@ func _set_is_selected(new_value: bool) -> void:
 	# else:
 	# 	mouse_filter = MOUSE_FILTER_PASS
 
-
 func _ready() -> void:
+	item_texture.anchors_preset = item_texture.PRESET_CENTER
 	# Moving the hitbox x axis 1 slot to the left;
 	# So it's more aligned with the texture.
 	if not Engine.is_editor_hint():
@@ -57,4 +59,15 @@ func rotate_item() -> void:
 	rotation_degrees += 90
 	if rotation_degrees >= 360:
 		rotation_degrees = 0
+
+func snap_to(destination: Vector2) -> void:
+	var tween := get_tree().create_tween().set_trans(Tween.TRANS_SINE)
+	var rect_size = item_texture.get_rect().size
+
+	if int(rotation_degrees) % 180 == 0:
+		destination += rect_size/2 
+	else:
+		destination += Vector2(rect_size.y, rect_size.x)/2
+
+	tween.tween_property(self, "global_position", destination, 0.15)
 
