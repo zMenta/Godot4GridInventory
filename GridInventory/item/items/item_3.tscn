@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://5j6foy0q5uo7"]
+
+[ext_resource type="PackedScene" uid="uid://dmte53uq1nlnl" path="res://item/item.tscn" id="1_dvmoj"]
+[ext_resource type="Texture2D" uid="uid://kq2lhu5pgufv" path="res://assets/item4.png" id="2_3efxf"]
+
+[node name="item3" instance=ExtResource("1_dvmoj")]
+item_grid = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0)])
+
+[node name="ItemTexture" parent="." index="0"]
+offset_right = 96.0
+offset_bottom = 32.0
+texture = ExtResource("2_3efxf")
+stretch_mode = 2

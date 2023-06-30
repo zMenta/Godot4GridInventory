@@ -11,6 +11,7 @@ var item_held : Item = null
 var current_slot : Slot = null
 var can_place := false
 var icon_anchor : Vector2i = Vector2i()
+var item_path_array = []
 
 func _ready() -> void:
 	for i in range(slot_amount):
@@ -20,6 +21,9 @@ func _ready() -> void:
 		grid_container.add_child(slot)
 		slot.slot_entered.connect(_on_slot_mouse_entered)
 		slot.slot_exited.connect(_on_slot_mouse_exited)
+
+	for file in DirAccess.get_files_at("res://item/items"):
+		item_path_array.append("res://item/items/" + file)
 
 func _process(_delta: float) -> void:
 	if item_held:
@@ -41,14 +45,16 @@ func _on_slot_mouse_entered(slot: Slot) -> void:
 		set_slots.call_deferred(current_slot)
 
 
-func _on_slot_mouse_exited(slot: Slot) -> void:
+func _on_slot_mouse_exited(_slot: Slot) -> void:
 	current_slot = null
 	clear_slots()
 
 
 # Item spawn button
 func _on_button_pressed() -> void:
-	var item : Item = load("res://item/item.tscn").instantiate()
+	if item_held != null:
+		return
+	var item : Item = load(item_path_array.pick_random()).instantiate()
 	item.is_selected = true
 	add_child(item)
 	item_held = item
