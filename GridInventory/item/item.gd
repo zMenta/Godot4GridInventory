@@ -1,5 +1,5 @@
 @tool
-extends TextureRect
+extends Node2D
 class_name Item
 
 @export var item_grid : Array[Vector2i] = [Vector2i()] : set = _set_item_grid
@@ -18,23 +18,28 @@ func _set_item_grid(new_value: Array[Vector2i]) -> void:
 
 func _set_is_selected(new_value: bool) -> void:
 	is_selected = new_value
-	if is_selected:
-		mouse_filter = MOUSE_FILTER_IGNORE
-	else:
-		mouse_filter = MOUSE_FILTER_PASS
+	# if is_selected:
+	# 	mouse_filter = MOUSE_FILTER_IGNORE
+	# else:
+	# 	mouse_filter = MOUSE_FILTER_PASS
 
 
 func _ready() -> void:
 	# Moving the hitbox x axis 1 slot to the left;
 	# So it's more aligned with the texture.
-	for i in item_grid.size():		
-		item_grid[i] -= Vector2i(1,0)
+	if not Engine.is_editor_hint():
+		for i in item_grid.size():		
+			item_grid[i] -= Vector2i(1,0)
 
 
 func _process(delta: float) -> void:
 	if is_selected:
-		var offset : Vector2 = texture.get_size() / 2  + Vector2(10, -10)
-		global_position = lerp(global_position, get_global_mouse_position() - offset, 25 * delta) 
+		# var offset : Vector2 = texture.get_size() / 2  + Vector2(10, -10)
+		# global_position = lerp(global_position, get_global_mouse_position() - offset, 25 * delta) 
+		global_position = lerp(global_position, get_global_mouse_position(), 25 * delta) 
+
+		if Input.is_action_just_pressed("rotate"):
+			rotate_item()
 
 
 func _draw() -> void:
@@ -51,11 +56,11 @@ func _draw_item_grid(grid_array: Array[Vector2i]) -> void:
 			true
 		)
 
-func rotate() -> void:
+func rotate_item() -> void:
 	for i in item_grid.size():
 		item_grid[i] = Vector2i(item_grid[i].y, item_grid[i].x)
 
 	rotation_degrees += 90
-	if rotation_degrees > 360:
+	if rotation_degrees >= 360:
 		rotation_degrees = 0
 
