@@ -122,6 +122,8 @@ func place_item() -> void:
 
 	item_held.slot_anchor = current_slot
 	item_held.is_selected = false
+	item_held.reparent(grid_container)
+	item_held.global_position = get_global_mouse_position()
 	item_held = null
 	clear_slots()
 	
@@ -132,6 +134,9 @@ func pickup_item() -> void:
 
 	item_held = current_slot.stored_item
 	item_held.is_selected = true
+
+	item_held.reparent(self)
+	item_held.global_position = get_global_mouse_position()
 
 	for grid in item_held.item_grid:
 		var slot_id : int = item_held.slot_anchor.id + grid.x + (grid.y * col_count)

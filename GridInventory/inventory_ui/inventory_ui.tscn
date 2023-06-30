@@ -10,7 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_kb18l")
-slot_amount = 168
+slot_amount = 219
 
 [node name="ColorRect" type="ColorRect" parent="."]
 custom_minimum_size = Vector2(420, 520)
