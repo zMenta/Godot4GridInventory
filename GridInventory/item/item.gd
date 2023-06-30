@@ -26,10 +26,10 @@ func _set_is_selected(new_value: bool) -> void:
 		top_level = false
 
 func _ready() -> void:
-	item_texture.anchors_preset = item_texture.PRESET_CENTER
 	# Moving the hitbox x axis 1 slot to the left;
 	# So it's more aligned with the texture.
 	if not Engine.is_editor_hint():
+		item_texture.anchors_preset = item_texture.PRESET_CENTER
 		for i in item_grid.size():		
 			item_grid[i] -= Vector2i(1,0)
 
