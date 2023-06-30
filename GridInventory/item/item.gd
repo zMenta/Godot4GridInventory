@@ -8,7 +8,7 @@ class_name Item
 @onready var item_texture : TextureRect = $ItemTexture
 
 var is_selected := false : set = _set_is_selected
-var grid_anchor : Vector2i
+var slot_anchor : Slot
 
 func _set_hide_item_grid(new_value: bool) -> void:
 	hide_item_grid = new_value
@@ -20,10 +20,10 @@ func _set_item_grid(new_value: Array[Vector2i]) -> void:
 
 func _set_is_selected(new_value: bool) -> void:
 	is_selected = new_value
-	# if is_selected:
-	# 	mouse_filter = MOUSE_FILTER_IGNORE
-	# else:
-	# 	mouse_filter = MOUSE_FILTER_PASS
+	if is_selected:
+		top_level = true
+	else:
+		top_level = false
 
 func _ready() -> void:
 	item_texture.anchors_preset = item_texture.PRESET_CENTER

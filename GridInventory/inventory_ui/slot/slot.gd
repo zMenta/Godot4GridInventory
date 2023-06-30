@@ -11,7 +11,7 @@ enum States {DEFAULT, OCCUPIED, FREE}
 var id : int
 var is_hovering := false
 var state := States.DEFAULT : set = _set_state
-var stored_item = null
+var stored_item : Item
 
 
 func _set_state(new_state: States = States.DEFAULT) -> void:

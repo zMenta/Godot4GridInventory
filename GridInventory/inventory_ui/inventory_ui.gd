@@ -22,11 +22,15 @@ func _ready() -> void:
 		slot.slot_exited.connect(_on_slot_mouse_exited)
 
 func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("rotate") and item_held:
-		rotate_held_item()
+	if item_held:
+		if Input.is_action_just_pressed("rotate"):
+			rotate_held_item()
 
-	if Input.is_action_just_pressed("m1") and item_held and current_slot:
-		place_item()
+		if Input.is_action_just_pressed("m1") and current_slot:
+			place_item()
+	else:
+		if Input.is_action_just_pressed("m1") and current_slot:
+			pickup_item()
 
 
 func _on_slot_mouse_entered(slot: Slot) -> void:
@@ -63,7 +67,10 @@ func check_slot_availability(slot: Slot) -> void:
 		if slot_to_check < 0 or slot_to_check >= slot_array.size():
 			can_place = false
 			return
-		if slot_array[slot_to_check].state == slot_array[slot_to_check].States.OCCUPIED:
+		if slot_array[slot_to_check].state == Slot.States.OCCUPIED:
+			can_place = false
+			return
+		if slot_array[slot_to_check].stored_item != null:
 			can_place = false
 			return
 	can_place = true
@@ -107,7 +114,30 @@ func place_item() -> void:
 
 	var slot_anchor : int = current_slot.id + icon_anchor.x + (icon_anchor.y * col_count)
 	item_held.snap_to(slot_array[slot_anchor].global_position)
+	
+	for grid in item_held.item_grid:
+		var slot_to_check : int = current_slot.id + grid.x + (grid.y * col_count)
+		slot_array[slot_to_check].state = Slot.States.OCCUPIED
+		slot_array[slot_to_check].stored_item = item_held
+
+	item_held.slot_anchor = current_slot
 	item_held.is_selected = false
 	item_held = null
+	clear_slots()
 	
+
+func pickup_item() -> void:
+	if current_slot.stored_item == null:
+		return
+
+	item_held = current_slot.stored_item
+	item_held.is_selected = true
+
+	for grid in item_held.item_grid:
+		var slot_id : int = item_held.slot_anchor.id + grid.x + (grid.y * col_count)
+		slot_array[slot_id].state = Slot.States.DEFAULT
+		slot_array[slot_id].stored_item = null
+
+	check_slot_availability(current_slot)
+	set_slots.call_deferred(current_slot)
 
