@@ -33,7 +33,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if is_selected:
-		global_position = lerp(global_position, get_global_mouse_position() - texture.get_size() / 2, 25 * delta) 
+		var offset : Vector2 = texture.get_size() / 2  + Vector2(10, -10)
+		global_position = lerp(global_position, get_global_mouse_position() - offset, 25 * delta) 
 
 
 func _draw() -> void:

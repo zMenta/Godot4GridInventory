@@ -31,8 +31,7 @@ func _on_slot_mouse_entered(slot: Slot) -> void:
 
 
 func _on_slot_mouse_exited(slot: Slot) -> void:
-	# slot.state = slot.States.DEFAULT
-	pass
+	clear_slots()
 
 # Item spawn button
 func _on_button_pressed() -> void:
@@ -81,3 +80,7 @@ func set_slots(slot: Slot) -> void:
 		else:
 			slot_array[slot_to_check].state = Slot.States.OCCUPIED
 
+
+func clear_slots() -> void:
+	for slot in slot_array:
+		slot.state = Slot.States.DEFAULT
