@@ -21,6 +21,9 @@ func _ready() -> void:
 		slot.slot_entered.connect(_on_slot_mouse_entered)
 		slot.slot_exited.connect(_on_slot_mouse_exited)
 
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("rotate") and item_held:
+		_rotate_held_item()
 
 func _on_slot_mouse_entered(slot: Slot) -> void:
 	icon_anchor = Vector2i(10000, 10000)
@@ -73,7 +76,6 @@ func set_slots(slot: Slot) -> void:
 			continue
 
 		if can_place:
-			print("slot set")
 			slot_array[slot_to_check].state = Slot.States.FREE
 			if grid[0] < icon_anchor.y: icon_anchor.y = grid[0]
 			if grid[1] < icon_anchor.x: icon_anchor.x = grid[1]
@@ -84,3 +86,9 @@ func set_slots(slot: Slot) -> void:
 func clear_slots() -> void:
 	for slot in slot_array:
 		slot.state = Slot.States.DEFAULT
+
+func _rotate_held_item() -> void:
+	item_held.rotate_item()
+	clear_slots()
+	if current_slot:
+		_on_slot_mouse_entered(current_slot)

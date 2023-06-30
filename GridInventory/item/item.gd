@@ -31,16 +31,14 @@ func _ready() -> void:
 		for i in item_grid.size():		
 			item_grid[i] -= Vector2i(1,0)
 
+	print(item_grid)
+
 
 func _process(delta: float) -> void:
 	if is_selected:
 		# var offset : Vector2 = texture.get_size() / 2  + Vector2(10, -10)
 		# global_position = lerp(global_position, get_global_mouse_position() - offset, 25 * delta) 
 		global_position = lerp(global_position, get_global_mouse_position(), 25 * delta) 
-
-		if Input.is_action_just_pressed("rotate"):
-			rotate_item()
-
 
 func _draw() -> void:
 	if Engine.is_editor_hint() and not hide_item_grid:
@@ -58,9 +56,10 @@ func _draw_item_grid(grid_array: Array[Vector2i]) -> void:
 
 func rotate_item() -> void:
 	for i in item_grid.size():
-		item_grid[i] = Vector2i(item_grid[i].y, item_grid[i].x)
+		item_grid[i] = Vector2i(-item_grid[i].y, item_grid[i].x)
 
 	rotation_degrees += 90
 	if rotation_degrees >= 360:
 		rotation_degrees = 0
 
+	print(item_grid)
