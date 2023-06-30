@@ -24,6 +24,13 @@ func _set_is_selected(new_value: bool) -> void:
 		mouse_filter = MOUSE_FILTER_PASS
 
 
+func _ready() -> void:
+	# Moving the hitbox x axis 1 slot to the left;
+	# So it's more aligned with the texture.
+	for i in item_grid.size():		
+		item_grid[i] -= Vector2i(1,0)
+
+
 func _process(delta: float) -> void:
 	if is_selected:
 		global_position = lerp(global_position, get_global_mouse_position() - texture.get_size() / 2, 25 * delta) 
